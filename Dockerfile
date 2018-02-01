@@ -16,7 +16,7 @@ COPY . /go/src/github.com/open-falcon/falcon-plus/
 RUN set -ex \
     && addgroup -S open-falcon && adduser -S -G open-falcon open-falcon \
     # set apk repositories    
-    && echo -e "http://mirrors.tuna.tsinghua.edu.cn/alpine/v3.4/main\\nhttp://mirrors.tuna.tsinghua.edu.cn/alpine/v3.4/community" > /etc/apk/repositories \
+    #&& echo -e "http://mirrors.tuna.tsinghua.edu.cn/alpine/v3.4/main\\nhttp://mirrors.tuna.tsinghua.edu.cn/alpine/v3.4/community" > /etc/apk/repositories \
     # install dependences
     # add bash
     && apk add --update-cache bash supervisor \

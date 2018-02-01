@@ -1,0 +1,33 @@
+version: '2'
+services:
+  falcon-plus:
+    environment:
+        - REDIS=redis://redis:CN66law123@192.168.10.20/0
+        - "MYSQL=root:CN66law123@tcp(192.168.10.1:3306)"
+        - GIN_MODE=release
+    hostname: docker-redis
+    image: hualv/falcon-plus:latest
+    ports:
+        - 1988:1988
+    restart: always
+    network_mode: bridge
+    volumes:
+        - /data/docker/open-falcon/data:/usr/local/open-falcon/data
+  falcon-dashboard:
+    environment:
+      - API_ADDR=http://falcon-plus:8080/api/v1 
+      - SECRET_KEY=jlj452jasdj3o99873424 
+      - SITE_COOKIE=hl.falcon 
+      - PORTAL_DB_HOST=192.168.10.1 
+      - PORTAL_DB_USER=root 
+      - PORTAL_DB_PASS=CN66law123 
+      - ALARM_DB_HOST=192.168.10.1 
+      - ALARM_DB_USER=root 
+      - ALARM_DB_PASS=CN66law123
+    image: hualv/falcon-dashboard:latest
+    network_mode: bridge
+    links:
+        - falcon-plus:falcon-plus
+    ports:
+        - 18081:8081
+    restart: always
