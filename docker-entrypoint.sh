@@ -19,7 +19,7 @@ ARGS=(
     ['PLUS_API_HTTP']="0.0.0.0:${PLUS_API_HTTP_PORT:-8080}"
  )
 
-configurer() {
+configure() {
     for key in ${!ARGS[*]}
     do  
         search="%%${key}%%"
@@ -35,8 +35,12 @@ configurer() {
         
     done
 }
+# ensure that the graph has written permissions.
+chown -R open-falcon:open-falcon /usr/local/open-falcon/data
 
-configurer
+# replace config file with environment arguments。 
+configure
+
 
 
 exec "$@"

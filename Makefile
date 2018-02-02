@@ -73,7 +73,7 @@ pack: checkbin
 
 pack-docker: checkbin
 	@if [ -e out ] ; then rm -rf out; fi
-	@bash  -c "mkdir -p out/{logs,bin,config,data/graph/6070}"
+	@bash  -c "mkdir -p out/{logs,bin,config,data/graph}"
 	@$(foreach var,$(CMD),cp ./config/$(var).json ./out/config/$(var)-cfg.json;)
 	@$(foreach var,$(CMD),cp ./bin/$(var)/falcon-$(var) ./out/bin;)
 	@cp -r ./modules/agent/public ./out/public/
