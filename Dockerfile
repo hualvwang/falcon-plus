@@ -36,7 +36,7 @@ RUN set -ex \
     && mv out/* /usr/local/open-falcon/ \
     && make clean \
     && mv docker-entrypoint.sh / \
-    && mv supervisord.conf /usr/local/open-falcon/ \
+    && mv supervisord.tpl /usr/local/open-falcon/ \
     && chmod +x /docker-entrypoint.sh \
     && chown -R open-falcon:open-falcon /usr/local/open-falcon/ \
     # cleaning up

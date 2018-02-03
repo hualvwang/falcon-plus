@@ -1,6 +1,7 @@
 #!/bin/bash
 set -e
 declare -A ARGS;
+declare -A MODULES;
 ARGS=(
     ["AGENT_HTTP"]="0.0.0.0:${AGENT_HTTP_PORT:-1988}"
     ['AGGREGATOR_HTTP']="0.0.0.0:${AGGREGATOR_HTTP_PORT:-6055}"
@@ -19,7 +20,51 @@ ARGS=(
     ['PLUS_API_HTTP']="0.0.0.0:${PLUS_API_HTTP_PORT:-8080}"
  )
 
+MODULES=(
+    ["START_API"]="false"
+    ['START_AGENT']="false"
+    ['START_AGGREGATOR']="false"
+    ['START_ALARM']="false"
+    ['START_GATEWAY']="false"
+    ['START_HBS']="false"
+    ['START_JUDGE']="false"
+    ['START_NODATA']="false"
+    ['START_TRANSFER']="false"
+    ['START_GRAPH']="false"
+ )
+
+module() {
+    /bin/cp -f supervisord.tpl supervisord.conf
+    if [[ -n "$ENABLE_MODULES" ]];then
+        local M=($ENABLE_MODULES)
+        for m in ${M[@]}  
+        do  
+            declare -u KEY="START_$m"
+            if [[ "${MODULES[$KEY]}" = "false" ]]; then
+                MODULES[$KEY]="true";
+            fi
+        done
+    fi
+    for key in ${!MODULES[*]}
+    do  
+        search="%%${key}%%"
+        replace=${MODULES["$key"]}
+        #echo "$search = $replace"
+        sysname=$(uname)
+        if [ "$sysname" == "Darwin" ] ; then
+            # Note the "" and -e  after -i, needed in OS X
+            sed -i .tpl -e "s#${search}#${replace}#g" supervisord.conf;
+        else
+            sed -i "s#${search}#${replace}#g" supervisord.conf;
+        fi
+        
+    done
+}
+
 configure() {
+    # rename .tpl .json ./config/*.tpl
+    rm -f ./config/*.json
+    find config -name "*.tpl" | while read name;do newname=$(echo $name |sed 's/\.tpl/\.json/') ;/bin/cp -f $name $newname ; done
     for key in ${!ARGS[*]}
     do  
         search="%%${key}%%"
@@ -39,14 +84,10 @@ configure() {
 # ensure that the graph has written permissions.
 chown -R open-falcon:open-falcon /usr/local/open-falcon/data
 
-rm -f ./config/*.json
-
-find config -name "*.tpl" | while read name;do newname=$(echo $name |sed 's/\.tpl/\.json/') ;/bin/cp -f $name $newname ; done
-# rename .tpl .json ./config/*.tpl
 
 # replace config file with environment arguments。 
 configure
 
-
+module
 
 exec "$@"
