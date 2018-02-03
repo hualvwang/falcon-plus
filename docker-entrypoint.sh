@@ -40,7 +40,9 @@ configure() {
 chown -R open-falcon:open-falcon /usr/local/open-falcon/data
 
 rm -f ./config/*.json
-rename .tpl .json ./config/*.tpl
+
+find config -name "*.tpl" | while read name;do newname=$(echo $name |sed 's/\.tpl/\.json/') ;/bin/cp -f $name $newname ; done
+# rename .tpl .json ./config/*.tpl
 
 # replace config file with environment arguments。 
 configure
