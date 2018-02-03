@@ -35,8 +35,12 @@ configure() {
         
     done
 }
+
 # ensure that the graph has written permissions.
 chown -R open-falcon:open-falcon /usr/local/open-falcon/data
+
+rm -f ./config/*.json
+rename .tpl .json ./config/*.tpl
 
 # replace config file with environment arguments。 
 configure
